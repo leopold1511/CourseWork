@@ -1,8 +1,21 @@
 package org.example;
 
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxEdgeLabelLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.view.mxGraph;
 import controllersandservices.ProductService;
 import datamodel.Product;
 import datamodel.Stage;
+import org.jgrapht.Graph;
+import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class Main extends JFrame {
@@ -101,26 +115,66 @@ public class Main extends JFrame {
     }
 
     private void viewGraph() {
-        GraphModel graphModel = new GraphModel();
+        ArrayList<Product> products= productService.getAllProducts();
+        Graph<String, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
 
-        // Populate the graph with data (example data for demonstration)
-        graphModel.addVertex("Company A");
-        graphModel.addVertex("Company B");
-        graphModel.addVertex("Company C");
-        graphModel.addVertex("Company D");
-        graphModel.addVertex("End Device");
+        // Add vertices and edges
+        for (Product product : products) {
+            for (Stage stage : product.getStages()) {
+                graph.addVertex(stage.getStageId() + ":" + stage.getStageName());
 
-        graphModel.addEdge("Company A", "Company B");
-        graphModel.addEdge("Company B", "Company C");
-        graphModel.addEdge("Company C", "Company D");
-        graphModel.addEdge("Company D", "End Device");
+                for (String nextStageId : stage.getNextStages()) {
+                    for (Stage nextStage : product.getStages()) {
+                        if (nextStage.getStageId().equals(nextStageId)) {
+                            graph.addVertex(nextStage.getStageId() + ":" + nextStage.getStageName());
+                            graph.addEdge(stage.getStageId() + ":" + stage.getStageName(), nextStage.getStageId() + ":" + nextStage.getStageName());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
-        GraphPanel graphPanel = new GraphPanel(graphModel.getGraph());
-        JFrame graphFrame = new JFrame("Technology Map Graph");
-        graphFrame.setSize(800, 600);
-        graphFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        graphFrame.add(graphPanel);
-        graphFrame.setVisible(true);
+        // Visualize the graph
+        JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<>(graph) {
+            @Override
+            public String convertValueToString(Object cell) {
+                if (cell instanceof mxCell) {
+                    Object value = ((mxCell) cell).getValue();
+                    return value != null ? value.toString().split(":")[1] : "";
+                }
+                return super.convertValueToString(cell);
+            }
+        };
+
+        // Set vertex style
+        Map<String, Object> style = graphAdapter.getStylesheet().getDefaultVertexStyle();
+        style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+        style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+        style.put(mxConstants.STYLE_FILLCOLOR, "#C3D9FF");
+        style.put(mxConstants.STYLE_STROKECOLOR, "#6482B9");
+        style.put(mxConstants.STYLE_FONTSIZE, 16);
+        style.put(mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
+        style.put(mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
+        style.put(mxConstants.STYLE_SPACING_TOP, 30);
+        style.put(mxConstants.STYLE_SPACING_LEFT, 30);
+        style.put(mxConstants.STYLE_SPACING_RIGHT, 30);
+        style.put(mxConstants.STYLE_SPACING_BOTTOM, 30);
+
+        // Apply a hierarchical layout
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graphAdapter);
+        layout.execute(graphAdapter.getDefaultParent());
+
+        // Create and display the frame
+        JFrame frame = new JFrame();
+        mxGraphComponent graphComponent = new mxGraphComponent(graphAdapter);
+        graphComponent.getViewport().setOpaque(true);
+        graphComponent.getViewport().setBackground(Color.WHITE);
+        graphComponent.zoomTo(1.25, true);
+        frame.getContentPane().add(graphComponent);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public static void main(String[] args) {

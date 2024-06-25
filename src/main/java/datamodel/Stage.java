@@ -3,61 +3,72 @@ package datamodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.List;
 
 public class Stage {
-    private Long id;
+    private String stageId;
     private String stageName;
-    private Organization responsibleOrganization;
-    private ArrayList<Component> requiredComponents;
-    private ArrayList<Equipment> requiredEquipment;
-    private ArrayList<Personnel> requiredPersonnel;
+    private String company;
+    private List<String> components;
+    private List<String> equipment;
+    private List<Personnel> personnel;
+    private List<String> nextStages;
 
-    public Long getId() {
-        return id;
+    public String getStageId() {
+        return stageId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setStageId(String stageId) {
+        this.stageId = stageId;
     }
 
     public String getStageName() {
         return stageName;
     }
 
-    public void setStageName(String name) {
-        this.stageName = name;
+    public void setStageName(String stageName) {
+        this.stageName = stageName;
     }
 
-    public Organization getResponsibleOrganization() {
-        return responsibleOrganization;
+    public String getCompany() {
+        return company;
     }
 
-    public void setResponsibleOrganization(Organization responsibleOrganization) {
-        this.responsibleOrganization = responsibleOrganization;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
-    public ArrayList<Component> getRequiredComponents() {
-        return requiredComponents;
+    public List<String> getComponents() {
+        return components;
     }
 
-    public void setRequiredComponents(ArrayList<Component> requiredComponents) {
-        this.requiredComponents = requiredComponents;
+    public void setComponents(List<String> components) {
+        this.components = components;
     }
 
-    public ArrayList<Equipment> getRequiredEquipment() {
-        return requiredEquipment;
+    public List<String> getEquipment() {
+        return equipment;
     }
 
-    public void setRequiredEquipment(ArrayList<Equipment> requiredEquipment) {
-        this.requiredEquipment = requiredEquipment;
+    public void setEquipment(List<String> equipment) {
+        this.equipment = equipment;
     }
 
-    public ArrayList<Personnel> getRequiredPersonnel() {
-        return requiredPersonnel;
+    public List<Personnel> getPersonnel() {
+        return personnel;
     }
 
-    public void setRequiredPersonnel(ArrayList<Personnel> requiredPersonnel) {
-        this.requiredPersonnel = requiredPersonnel;
+    public void setPersonnel(List<Personnel> personnel) {
+        this.personnel = personnel;
+    }
+
+    public List<String> getNextStages() {
+        return nextStages;
+    }
+
+    public void setNextStages(List<String> nextStages) {
+        this.nextStages = nextStages;
     }
 }
+
 
