@@ -3,27 +3,10 @@ package datamodel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Product {
-    private Long id;
-    private String productName;
+public class Product extends Data {
+
     private String strategicDirection;
     private ArrayList<Stage> stages;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
 
     public String getStrategicDirection() {
         return strategicDirection;
@@ -33,7 +16,7 @@ public class Product {
         this.strategicDirection = strategicDirection;
     }
 
-    public List<Stage> getStages() {
+    public ArrayList<Stage> getStages() {
         return stages;
     }
 

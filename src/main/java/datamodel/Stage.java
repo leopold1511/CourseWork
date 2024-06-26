@@ -1,72 +1,52 @@
 package datamodel;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import java.util.List;
+public class Stage extends Data {
 
-public class Stage {
-    private String stageId;
-    private String stageName;
-    private String company;
-    private List<String> components;
-    private List<String> equipment;
-    private List<Personnel> personnel;
-    private List<String> nextStages;
+    private ArrayList<String> organizations;
+    private ArrayList<String> components;
+    private ArrayList<String> equipment;
+    private ArrayList<Personnel> personnel;
+    private ArrayList<String> nextStages;
 
-    public String getStageId() {
-        return stageId;
+    public  ArrayList<String> getOrganizations() {
+        return organizations;
     }
 
-    public void setStageId(String stageId) {
-        this.stageId = stageId;
+    public void setOrganizations(ArrayList<String> organizations) {
+        this.organizations = organizations;
     }
 
-    public String getStageName() {
-        return stageName;
-    }
-
-    public void setStageName(String stageName) {
-        this.stageName = stageName;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    public List<String> getComponents() {
+    public ArrayList<String> getComponents() {
         return components;
     }
 
-    public void setComponents(List<String> components) {
+    public void setComponents(ArrayList<String> components) {
         this.components = components;
     }
 
-    public List<String> getEquipment() {
+    public ArrayList<String> getEquipment() {
         return equipment;
     }
 
-    public void setEquipment(List<String> equipment) {
+    public void setEquipment(ArrayList<String> equipment) {
         this.equipment = equipment;
     }
 
-    public List<Personnel> getPersonnel() {
+    public ArrayList<Personnel> getPersonnel() {
         return personnel;
     }
 
-    public void setPersonnel(List<Personnel> personnel) {
+    public void setPersonnel(ArrayList<Personnel> personnel) {
         this.personnel = personnel;
     }
 
-    public List<String> getNextStages() {
+    public ArrayList<String> getNextStages() {
         return nextStages;
     }
 
-    public void setNextStages(List<String> nextStages) {
+    public void setNextStages(ArrayList<String> nextStages) {
         this.nextStages = nextStages;
     }
 }

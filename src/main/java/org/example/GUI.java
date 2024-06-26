@@ -1,16 +1,19 @@
 package org.example;
 
 import controllersandservices.ProductService;
+import datamodel.Data;
 import datamodel.Product;
-import datamodel.Stage;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 public class GUI extends JFrame {
     private final ProductService productService;
+    private  JPanel mainPanel;
 
     public GUI(ProductService productService) {
         this.productService = productService;
@@ -23,15 +26,15 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel();
+        mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
-        JButton viewProductsButton = new JButton("View Products");
+        JButton refreshTreeButton = new JButton("Refresh Tree");
         JButton addProductButton = new JButton("Add Product");
         JButton importProductButton = new JButton("Import Product");
         JButton viewGraphButton = new JButton("View Graph");
 
-        viewProductsButton.addActionListener(e -> viewProducts());
+        refreshTreeButton.addActionListener(e -> refreshTree());
 
         addProductButton.addActionListener(e -> addProduct());
 
@@ -42,7 +45,7 @@ public class GUI extends JFrame {
             ArrayList<Product> productList = productService.getAllProducts();
 
             String[] productNames = productList.stream()
-                    .map(Product::getProductName)
+                    .map(Product::getName)
                     .toArray(String[]::new);
 
             String selectedProductName = (String) JOptionPane.showInputDialog(
@@ -56,7 +59,7 @@ public class GUI extends JFrame {
 
             if (selectedProductName != null) {
                 Product selectedProduct = productList.stream()
-                        .filter(p -> p.getProductName().equals(selectedProductName))
+                        .filter(p -> p.getName().equals(selectedProductName))
                         .findFirst()
                         .orElse(null);
 
@@ -70,31 +73,58 @@ public class GUI extends JFrame {
         });
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.add(viewProductsButton);
+        buttonPanel.add(refreshTreeButton);
         buttonPanel.add(addProductButton);
         buttonPanel.add(importProductButton);
         buttonPanel.add(viewGraphButton);
 
         mainPanel.add(buttonPanel, BorderLayout.NORTH);
 
-
         add(mainPanel, BorderLayout.CENTER);
     }
+    private void createTree(JPanel mainPanel){
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        Map<String, List<?>> newDataMap = new HashMap<>();
+        for (Map.Entry<String, ArrayList<Data>> entry : productService.getStageDataMap().entrySet()) {
+            newDataMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+        }
+        Map<String, List<?>> newStringMap = new HashMap<>();
+        for (Map.Entry<String, HashSet<String>> entry : productService.getStageStringMap().entrySet()) {
+            newStringMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+        }
 
-    private void viewProducts() {
-        ArrayList<Product> products = productService.getAllProducts();
-        for (Stage stage : products.getFirst().getStages()) {
-            System.out.println(stage.getStageName());
+        addMapToTree(root, newDataMap);
+        addMapToTree(root, newStringMap);
+
+        JTree tree = new JTree(root);
+        JScrollPane treeScrollPane = new JScrollPane(tree);
+
+        mainPanel.add(treeScrollPane, BorderLayout.CENTER);
+    }
+    private void addMapToTree(DefaultMutableTreeNode root, Map<String, List<?>> map) {
+        for (Map.Entry<String, List<?>> entry : map.entrySet()) {
+            DefaultMutableTreeNode keyNode = new DefaultMutableTreeNode(entry.getKey());
+            root.add(keyNode);
+            for (Object value : entry.getValue()) {
+                DefaultMutableTreeNode valueNode = new DefaultMutableTreeNode(value.toString());
+                keyNode.add(valueNode);
+            }
         }
     }
 
+    private void refreshTree() {
+        createTree(mainPanel);
+        mainPanel.revalidate();
+        add(mainPanel, BorderLayout.CENTER);
+    }
+
     private void addProduct() {
-        String[] names= {
-                "Компонент",
-                "Персонал",
-                "Оборудование",
-                "Организация",
-                "Стадия",
+        String[] names = {
+                ProductService.COMPONENTS_KEY,
+                ProductService.PERSONNEL_KEY,
+                ProductService.EQUIPMENT_KEY,
+                ProductService.ORGANIZATIONS_KEY,
+                ProductService.STAGES_KEY,
         };
 
         String selectedProductName = (String) JOptionPane.showInputDialog(

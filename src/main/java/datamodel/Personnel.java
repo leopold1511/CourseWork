@@ -1,16 +1,13 @@
 package datamodel;
 
-public class Personnel {
-    private Long id;
+public class Personnel extends Data{
+
     private String profession;
     private int manHours;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return profession;
     }
 
     public String getProfession() {

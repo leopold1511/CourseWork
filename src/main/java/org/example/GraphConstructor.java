@@ -27,26 +27,27 @@ public class GraphConstructor {
             put("Прекращение разработки", new ArrayList<>());
         }
     };
+
     public void viewGraph(Product product) {
         Graph<String, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
 
-            for (Stage stage : product.getStages()) {
-                graph.addVertex(stage.getStageId() + ":" + stage.getStageName());
+        for (Stage stage : product.getStages()) {
+            graph.addVertex(stage.getId() + ":" + stage.getName());
 
-                for (String nextStageId : stage.getNextStages()) {
-                    for (Stage nextStage : product.getStages()) {
-                        if (nextStage.getStageId().equals(nextStageId)) {
-                            graph.addVertex(nextStage.getStageId() + ":" + nextStage.getStageName());
-                            try {
-                                mapOfSpecialStageKeys.get(nextStage.getStageName()).add(nextStage.getStageId() + ":" + nextStage.getStageName());
-                            } catch (Exception ignored) {
-                            }
-                            graph.addEdge(stage.getStageId() + ":" + stage.getStageName(), nextStage.getStageId() + ":" + nextStage.getStageName());
-                            break;
+            for (String nextStageId : stage.getNextStages()) {
+                for (Stage nextStage : product.getStages()) {
+                    if (nextStage.getId().equals(nextStageId)) {
+                        graph.addVertex(nextStage.getId() + ":" + nextStage.getName());
+                        try {
+                            mapOfSpecialStageKeys.get(nextStage.getName()).add(nextStage.getId() + ":" + nextStage.getName());
+                        } catch (Exception ignored) {
                         }
+                        graph.addEdge(stage.getId() + ":" + stage.getName(), nextStage.getId() + ":" + nextStage.getName());
+                        break;
                     }
                 }
             }
+        }
 
         JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<>(graph) {
             @Override
@@ -116,7 +117,7 @@ public class GraphConstructor {
             for (String name : mapOfSpecialStageKeys.get("УР")) {
                 System.out.println(1);
                 graphAdapter.setCellStyle("customStyle1", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
-                mxGeometry geometry= graphAdapter.getVertexToCellMap().get(name).getGeometry();
+                mxGeometry geometry = graphAdapter.getVertexToCellMap().get(name).getGeometry();
                 geometry.setWidth(40);
                 geometry.setHeight(40);
             }
@@ -131,7 +132,7 @@ public class GraphConstructor {
 
             for (String name : mapOfSpecialStageKeys.get("Разветвление производственной линии")) {
                 graphAdapter.setCellStyle("customStyle2", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
-                mxGeometry geometry= graphAdapter.getVertexToCellMap().get(name).getGeometry();
+                mxGeometry geometry = graphAdapter.getVertexToCellMap().get(name).getGeometry();
                 geometry.setHeight(40);
                 geometry.setWidth(40);
             }
@@ -146,11 +147,10 @@ public class GraphConstructor {
 
             for (String name : mapOfSpecialStageKeys.get("Прекращение разработки")) {
                 graphAdapter.setCellStyle("customStyle3", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
-                mxGeometry geometry= graphAdapter.getVertexToCellMap().get(name).getGeometry();
+                mxGeometry geometry = graphAdapter.getVertexToCellMap().get(name).getGeometry();
                 geometry.setHeight(40);
                 geometry.setWidth(40);
             }
-
 
 
         } finally {
