@@ -5,6 +5,11 @@ public class Personnel extends Data{
     private String profession;
     private int manHours;
 
+    public Personnel(String profession, int manHours) {
+        this.profession = profession;
+        this.manHours = manHours;
+    }
+
     @Override
     public String toString() {
         return profession;

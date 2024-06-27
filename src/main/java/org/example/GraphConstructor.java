@@ -97,7 +97,7 @@ public class GraphConstructor {
         frame.getContentPane().add(graphComponent);
         frame.setSize(800, 600);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     private void configureVertexStyles(JGraphXAdapter<String, DefaultEdge> graphAdapter) {
@@ -115,7 +115,6 @@ public class GraphConstructor {
 
 
             for (String name : mapOfSpecialStageKeys.get("УР")) {
-                System.out.println(1);
                 graphAdapter.setCellStyle("customStyle1", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
                 mxGeometry geometry = graphAdapter.getVertexToCellMap().get(name).getGeometry();
                 geometry.setWidth(40);
