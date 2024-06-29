@@ -20,11 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GraphConstructor {
+    private static final String UR_KEY="УР";
+    private static final String BRANCHING_KEY="Разветвление производственной линии";
+    private static final String END_KEY="Прекращение разработки";
+
     Map<String, ArrayList<String>> mapOfSpecialStageKeys = new HashMap<>() {
         {
-            put("УР", new ArrayList<>());
-            put("Разветвление производственной линии", new ArrayList<>());
-            put("Прекращение разработки", new ArrayList<>());
+            put(UR_KEY, new ArrayList<>());
+            put(BRANCHING_KEY, new ArrayList<>());
+            put(END_KEY, new ArrayList<>());
         }
     };
 
@@ -97,7 +101,6 @@ public class GraphConstructor {
         frame.getContentPane().add(graphComponent);
         frame.setSize(800, 600);
         frame.setVisible(true);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     private void configureVertexStyles(JGraphXAdapter<String, DefaultEdge> graphAdapter) {
@@ -105,47 +108,47 @@ public class GraphConstructor {
         graphAdapter.getModel().beginUpdate();
         try {
 
-            Map<String, Object> style1 = new HashMap<>();
-            style1.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
-            style1.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-            style1.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-            style1.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-            style1.put(mxConstants.STYLE_RESIZABLE, 1);
-            graphAdapter.getStylesheet().putCellStyle("customStyle1", style1);
+            Map<String, Object> customUrStyle = new HashMap<>();
+            customUrStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
+            customUrStyle.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
+            customUrStyle.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+            customUrStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+            customUrStyle.put(mxConstants.STYLE_RESIZABLE, 1);
+            graphAdapter.getStylesheet().putCellStyle("customUrStyle", customUrStyle);
 
 
-            for (String name : mapOfSpecialStageKeys.get("УР")) {
-                graphAdapter.setCellStyle("customStyle1", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
+            for (String name : mapOfSpecialStageKeys.get(UR_KEY)) {
+                graphAdapter.setCellStyle("customUrStyle", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
                 mxGeometry geometry = graphAdapter.getVertexToCellMap().get(name).getGeometry();
                 geometry.setWidth(40);
                 geometry.setHeight(40);
             }
 
-            Map<String, Object> style2 = new HashMap<>();
-            style2.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
-            style2.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_TOP);
-            style2.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-            style2.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-            style2.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-            graphAdapter.getStylesheet().putCellStyle("customStyle2", style2);
+            Map<String, Object> customBranchingStyle = new HashMap<>();
+            customBranchingStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
+            customBranchingStyle.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_TOP);
+            customBranchingStyle.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
+            customBranchingStyle.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+            customBranchingStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+            graphAdapter.getStylesheet().putCellStyle("customBranchingStyle", customBranchingStyle);
 
-            for (String name : mapOfSpecialStageKeys.get("Разветвление производственной линии")) {
-                graphAdapter.setCellStyle("customStyle2", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
+            for (String name : mapOfSpecialStageKeys.get(BRANCHING_KEY)) {
+                graphAdapter.setCellStyle("customBranchingStyle", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
                 mxGeometry geometry = graphAdapter.getVertexToCellMap().get(name).getGeometry();
                 geometry.setHeight(40);
                 geometry.setWidth(40);
             }
-            Map<String, Object> style3 = new HashMap<>();
-            style3.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-            style3.put(mxConstants.STYLE_FILLCOLOR, "#000000");
-            style3.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-            style3.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_TOP);
-            style3.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-            style3.put(mxConstants.STYLE_RESIZABLE, 1);
-            graphAdapter.getStylesheet().putCellStyle("customStyle3", style3);
+            Map<String, Object> customEndStyle = new HashMap<>();
+            customEndStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
+            customEndStyle.put(mxConstants.STYLE_FILLCOLOR, "#000000");
+            customEndStyle.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+            customEndStyle.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_TOP);
+            customEndStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+            customEndStyle.put(mxConstants.STYLE_RESIZABLE, 1);
+            graphAdapter.getStylesheet().putCellStyle("customEndStyle", customEndStyle);
 
-            for (String name : mapOfSpecialStageKeys.get("Прекращение разработки")) {
-                graphAdapter.setCellStyle("customStyle3", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
+            for (String name : mapOfSpecialStageKeys.get(END_KEY)) {
+                graphAdapter.setCellStyle("customEndStyle", new Object[]{graphAdapter.getVertexToCellMap().get(name)});
                 mxGeometry geometry = graphAdapter.getVertexToCellMap().get(name).getGeometry();
                 geometry.setHeight(40);
                 geometry.setWidth(40);

@@ -15,16 +15,14 @@ import java.util.Map;
 
 public class JSONUtil {
 
-    public static Product importFromJson(String filePath) throws IOException {
+    public static Product importFromJson(String filePath) throws Exception {
         Gson gson = new Gson();
         FileReader reader = new FileReader(filePath);
-
         ProductData productData = gson.fromJson(reader, ProductData.class);
-
         reader.close();
-
         return productData.getProduct();
     }
+
     public static void exportToJson(Product product, String filePath) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         FileWriter writer = new FileWriter(filePath);
@@ -81,6 +79,7 @@ public class JSONUtil {
             this.listOfStages = listOfStages;
         }
     }
+
     public static DataWrapper importData(String filePath) throws IOException {
         Gson gson = new Gson();
         FileReader reader = new FileReader(filePath);

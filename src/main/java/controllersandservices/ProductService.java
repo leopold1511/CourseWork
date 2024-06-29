@@ -78,6 +78,9 @@ public class ProductService {
     public void importData(String path) throws IOException {
         addDataFromWrapper(JSONUtil.importData(path));
     }
+    public void importProduct(String path) throws Exception{
+        addProduct(JSONUtil.importFromJson(path));
+    }
     private void addDataFromWrapper(JSONUtil.DataWrapper dataWrapper) {
 
         dataWrapper.getStageStringMap().forEach((key, value) -> {
