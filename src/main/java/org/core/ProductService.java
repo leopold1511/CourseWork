@@ -36,6 +36,7 @@ public class ProductService {
 
     public void addProduct(Product product) {
         products.add(product);
+        replaceDuplicates(product);
         fillMaps(product);
     }
 
@@ -84,14 +85,21 @@ public class ProductService {
     }
 
     private void addDataFromWrapper(JSONUtil.DataWrapper dataWrapper) {
-
-        dataWrapper.getComponentsMap().forEach((key, value) -> {
-            elementsMap.getOrDefault(key, new HashSet<>()).addAll(value);
-        });
-
-        listOfStages.addAll(dataWrapper.getListOfStages());
+        dataWrapper.getElementsMap().forEach((key, value) -> elementsMap.getOrDefault(key, new HashSet<>()).addAll(value));
 
         for (Stage stage : dataWrapper.getListOfStages()) {
+            boolean stageExists = false;
+            for (Stage existingStage : listOfStages) {
+                if (existingStage.getName().equals(stage.getName())) {
+                    stageExists = true;
+                    replaceIfEqual(stage, existingStage);
+                    break;
+                }
+            }
+            if (!stageExists) {
+                listOfStages.add(stage);
+            }
+
             if (stage.getPersonnel() != null) {
                 for (Personnel personnel : stage.getPersonnel()) {
                     elementsMap.get(PERSONNEL_KEY).add(personnel.getProfession());
@@ -108,4 +116,36 @@ public class ProductService {
             }
         }
     }
+    public void replaceDuplicates(Product importedProduct) {
+        for (Stage importedStage : importedProduct.getStages()) {
+            for (Stage existingStage : listOfStages) {
+                if (importedStage.getName().equals(existingStage.getName())) {
+                    replaceIfEqual(importedStage, existingStage);
+                }
+            }
+        }
+    }
+
+    private void replaceIfEqual(Stage importedStage, Stage existingStage) {
+        if (importedStage.getOrganizations() != null && importedStage.getOrganizations().equals(existingStage.getOrganizations())) {
+            importedStage.setOrganizations(existingStage.getOrganizations());
+        }
+
+        if (importedStage.getComponents() != null && importedStage.getComponents().equals(existingStage.getComponents())) {
+            importedStage.setComponents(existingStage.getComponents());
+        }
+
+        if (importedStage.getEquipment() != null && importedStage.getEquipment().equals(existingStage.getEquipment())) {
+            importedStage.setEquipment(existingStage.getEquipment());
+        }
+
+        if (importedStage.getPersonnel() != null && importedStage.getPersonnel().equals(existingStage.getPersonnel())) {
+            importedStage.setPersonnel(existingStage.getPersonnel());
+        }
+
+        if (importedStage.getNextStages() != null && importedStage.getNextStages().equals(existingStage.getNextStages())) {
+            importedStage.setNextStages(existingStage.getNextStages());
+        }
+    }
+
 }

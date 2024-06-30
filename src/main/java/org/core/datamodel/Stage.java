@@ -46,6 +46,9 @@ public class Stage extends Data {
         return nextStages;
     }
 
+    public void setNextStages(ArrayList<String> nextStages) {
+        this.nextStages = nextStages;
+    }
 }
 
 

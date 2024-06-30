@@ -22,4 +22,5 @@ public class Product extends Data {
     public void setStages(ArrayList<Stage> stages) {
         this.stages = stages;
     }
+
 }
