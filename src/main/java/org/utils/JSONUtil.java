@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class JSONUtil {
 
-    public static Product importFromJson(String filePath) throws Exception {
+    public static Product importProduct(String filePath) throws Exception {
         Gson gson = new Gson();
         FileReader reader = new FileReader(filePath);
         ProductData productData = gson.fromJson(reader, ProductData.class);

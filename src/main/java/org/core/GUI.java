@@ -170,7 +170,8 @@ public class GUI extends JFrame {
                 return;
             }
             if (selectedProduct != null) {
-                GraphConstructor.viewGraph(selectedProduct);
+                GraphConstructor graphConstructor=new GraphConstructor();
+                graphConstructor.viewGraph(selectedProduct);
             } else {
                 JOptionPane.showMessageDialog(null, "Выбранный продукт не найден.", "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
@@ -252,7 +253,6 @@ public class GUI extends JFrame {
                         }
                     }
 
-                    // Add new personnel man-hours inputs
                     for (String selectedPersonnel : personnelList.getSelectedValuesList()) {
                         gbc.gridx = 0;
                         gbc.gridy++;
@@ -298,7 +298,6 @@ public class GUI extends JFrame {
                         List<String> selectedComponents = List.copyOf(componentsList.getSelectedValuesList());
                         ArrayList<Personnel> selectedPersonnel = new ArrayList<>();
 
-                        // Collecting personnel man-hours input
                         for (int i = 0; i < panel.getComponentCount(); i++) {
                             if (panel.getComponent(i) instanceof JLabel && ((JLabel) panel.getComponent(i)).getText().endsWith("Человеко-часы:")) {
                                 String profession = ((JLabel) panel.getComponent(i)).getText().replace(" Человеко-часы:", "");
@@ -317,13 +316,7 @@ public class GUI extends JFrame {
                             continue;
                         }
 
-                        Stage stage = new Stage();
-                        stage.setName(name);
-                        stage.setOrganizations(new ArrayList<>(selectedOrganizations));
-                        stage.setComponents(new ArrayList<>(selectedComponents));
-                        stage.setEquipment(new ArrayList<>(selectedEquipment));
-                        stage.setPersonnel(new ArrayList<>(selectedPersonnel));
-                        productService.getListOfStages().add(stage);
+                        productService.createStage(name,selectedOrganizations,selectedComponents,selectedEquipment,selectedPersonnel);
                     }
                     case ProductService.PRODUCTS_KEY -> {
                         String strategicDirection = strategicDirField.getText();

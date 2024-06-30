@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GraphConstructor {
-    private static final String UR_KEY="УР";
-    private static final String BRANCHING_KEY="Разветвление производственной линии";
-    private static final String END_KEY="Прекращение разработки";
+    private static final String UR_KEY = "УР";
+    private static final String BRANCHING_KEY = "Разветвление производственной линии";
+    private static final String END_KEY = "Прекращение разработки";
 
-    private static final Map<String, ArrayList<String>> mapOfSpecialStageKeys = new HashMap<>() {
+    private final Map<String, ArrayList<String>> mapOfSpecialStageKeys = new HashMap<>() {
         {
             put(UR_KEY, new ArrayList<>());
             put(BRANCHING_KEY, new ArrayList<>());
@@ -32,7 +32,7 @@ public class GraphConstructor {
         }
     };
 
-    public static void viewGraph(Product product) {
+    public void viewGraph(Product product) {
         Graph<String, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
 
         for (Stage stage : product.getStages()) {
@@ -103,7 +103,7 @@ public class GraphConstructor {
         frame.setVisible(true);
     }
 
-    private static void configureVertexStyles(JGraphXAdapter<String, DefaultEdge> graphAdapter) {
+    private void configureVertexStyles(JGraphXAdapter<String, DefaultEdge> graphAdapter) {
         Object parent = graphAdapter.getDefaultParent();
         graphAdapter.getModel().beginUpdate();
         try {
@@ -153,7 +153,6 @@ public class GraphConstructor {
                 geometry.setHeight(40);
                 geometry.setWidth(40);
             }
-
 
         } finally {
             graphAdapter.getModel().endUpdate();

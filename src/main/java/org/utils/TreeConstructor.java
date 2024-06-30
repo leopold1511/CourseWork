@@ -11,7 +11,7 @@ import java.util.List;
 
 public class TreeConstructor {
     public static void createTree(JPanel mainPanel, ProductService productService){
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Elements:");
         Map<String, List<String>> newStringMap = new HashMap<>();
 
         for (Map.Entry<String, HashSet<String>> entry : productService.getElementsMap().entrySet()) {

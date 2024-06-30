@@ -6,10 +6,7 @@ import org.core.datamodel.Stage;
 import org.utils.JSONUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class ProductService {
     private final ArrayList<Product> products = new ArrayList<>();
@@ -34,13 +31,13 @@ public class ProductService {
         return products;
     }
 
-    public void addProduct(Product product) {
+    private void addProduct(Product product) {
         products.add(product);
         replaceDuplicates(product);
         fillMaps(product);
     }
 
-    public void fillMaps(Product product) {
+    private void fillMaps(Product product) {
         for (Stage stage : product.getStages()) {
             boolean stageExists = listOfStages.stream().anyMatch(existingStage -> existingStage.getName().equals(stage.getName()));
             if (!stageExists) {
@@ -81,7 +78,7 @@ public class ProductService {
     }
 
     public void importProduct(String path) throws Exception {
-        addProduct(JSONUtil.importFromJson(path));
+        addProduct(JSONUtil.importProduct(path));
     }
 
     private void addDataFromWrapper(JSONUtil.DataWrapper dataWrapper) {
@@ -116,7 +113,8 @@ public class ProductService {
             }
         }
     }
-    public void replaceDuplicates(Product importedProduct) {
+
+    private void replaceDuplicates(Product importedProduct) {
         for (Stage importedStage : importedProduct.getStages()) {
             for (Stage existingStage : listOfStages) {
                 if (importedStage.getName().equals(existingStage.getName())) {
@@ -148,4 +146,44 @@ public class ProductService {
         }
     }
 
+    public void createStage(String name, List<String> selectedOrganizations, List<String> selectedComponents,
+                            List<String> selectedEquipment, List<Personnel> selectedPersonnel) {
+        Stage stage = new Stage();
+        stage.setName(name);
+        stage.setOrganizations(new ArrayList<>(selectedOrganizations));
+        stage.setComponents(new ArrayList<>(selectedComponents));
+        stage.setEquipment(new ArrayList<>(selectedEquipment));
+        stage.setPersonnel(new ArrayList<>(selectedPersonnel));
+
+        addStage(stage);
+    }
+
+    private void addStage(Stage stage) {
+        boolean stageExists = false;
+        for (Stage existingStage : listOfStages) {
+            if (existingStage.getName().equals(stage.getName())) {
+                stageExists = true;
+                replaceIfEqual(stage, existingStage);
+                break;
+            }
+        }
+        if (!stageExists) {
+            listOfStages.add(stage);
+        }
+
+        if (stage.getPersonnel() != null) {
+            for (Personnel personnel : stage.getPersonnel()) {
+                elementsMap.get(PERSONNEL_KEY).add(personnel.getProfession());
+            }
+        }
+        if (stage.getOrganizations() != null) {
+            elementsMap.get(ORGANIZATIONS_KEY).addAll(stage.getOrganizations());
+        }
+        if (stage.getComponents() != null) {
+            elementsMap.get(COMPONENTS_KEY).addAll(stage.getComponents());
+        }
+        if (stage.getEquipment() != null) {
+            elementsMap.get(EQUIPMENT_KEY).addAll(stage.getEquipment());
+        }
+    }
 }
