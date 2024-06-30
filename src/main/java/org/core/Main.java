@@ -1,6 +1,5 @@
-package org.example;
+package org.core;
 
-import controllersandservices.ProductService;
 import javax.swing.*;
 
 

@@ -1,7 +1,7 @@
-package org.example;
+package org.utils;
 
-import controllersandservices.ProductService;
-import datamodel.Stage;
+import org.core.ProductService;
+import org.core.datamodel.Stage;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -14,7 +14,7 @@ public class TreeConstructor {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
         Map<String, List<String>> newStringMap = new HashMap<>();
 
-        for (Map.Entry<String, HashSet<String>> entry : productService.getStageStringMap().entrySet()) {
+        for (Map.Entry<String, HashSet<String>> entry : productService.getElementsMap().entrySet()) {
             newStringMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
         }
 

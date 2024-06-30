@@ -1,9 +1,9 @@
-package datamodel;
+package org.core.datamodel;
 
-public class Personnel extends Data{
+public class Personnel extends Data {
 
-    private String profession;
-    private int manHours;
+    private final String profession;
+    private final int manHours;
 
     public Personnel(String profession, int manHours) {
         this.profession = profession;
@@ -19,15 +19,8 @@ public class Personnel extends Data{
         return profession;
     }
 
-    public void setProfession(String profession) {
-        this.profession = profession;
-    }
-
     public int getManHours() {
         return manHours;
     }
 
-    public void setManHours(int manHours) {
-        this.manHours = manHours;
-    }
 }

@@ -1,4 +1,4 @@
-package org.example;
+package org.utils;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
@@ -6,8 +6,8 @@ import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
-import datamodel.Product;
-import datamodel.Stage;
+import org.core.datamodel.Product;
+import org.core.datamodel.Stage;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
@@ -24,7 +24,7 @@ public class GraphConstructor {
     private static final String BRANCHING_KEY="Разветвление производственной линии";
     private static final String END_KEY="Прекращение разработки";
 
-    Map<String, ArrayList<String>> mapOfSpecialStageKeys = new HashMap<>() {
+    private static final Map<String, ArrayList<String>> mapOfSpecialStageKeys = new HashMap<>() {
         {
             put(UR_KEY, new ArrayList<>());
             put(BRANCHING_KEY, new ArrayList<>());
@@ -32,7 +32,7 @@ public class GraphConstructor {
         }
     };
 
-    public void viewGraph(Product product) {
+    public static void viewGraph(Product product) {
         Graph<String, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
 
         for (Stage stage : product.getStages()) {
@@ -103,7 +103,7 @@ public class GraphConstructor {
         frame.setVisible(true);
     }
 
-    private void configureVertexStyles(JGraphXAdapter<String, DefaultEdge> graphAdapter) {
+    private static void configureVertexStyles(JGraphXAdapter<String, DefaultEdge> graphAdapter) {
         Object parent = graphAdapter.getDefaultParent();
         graphAdapter.getModel().beginUpdate();
         try {

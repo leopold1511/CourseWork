@@ -1,10 +1,9 @@
-package controllersandservices;// ProductService.java
+package org.core;// ProductService.java
 
-import datamodel.Data;
-import datamodel.Personnel;
-import datamodel.Product;
-import datamodel.Stage;
-import org.example.JSONUtil;
+import org.core.datamodel.Personnel;
+import org.core.datamodel.Product;
+import org.core.datamodel.Stage;
+import org.utils.JSONUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.Map;
 public class ProductService {
     private final ArrayList<Product> products = new ArrayList<>();
     private final ArrayList<Stage> listOfStages = new ArrayList<>();
-    private final Map<String, HashSet<String>> stageStringMap = new HashMap<>();
+    private final Map<String, HashSet<String>> elementsMap = new HashMap<>();
 
     public static final String PERSONNEL_KEY = "Персонал";
     public static final String STAGES_KEY = "Стадии";
@@ -25,10 +24,10 @@ public class ProductService {
     public static final String PRODUCTS_KEY = "Продукт";
 
     {
-        stageStringMap.put(PERSONNEL_KEY, new HashSet<>());
-        stageStringMap.put(COMPONENTS_KEY, new HashSet<>());
-        stageStringMap.put(EQUIPMENT_KEY, new HashSet<>());
-        stageStringMap.put(ORGANIZATIONS_KEY, new HashSet<>());
+        elementsMap.put(PERSONNEL_KEY, new HashSet<>());
+        elementsMap.put(COMPONENTS_KEY, new HashSet<>());
+        elementsMap.put(EQUIPMENT_KEY, new HashSet<>());
+        elementsMap.put(ORGANIZATIONS_KEY, new HashSet<>());
     }
 
     public ArrayList<Product> getAllProducts() {
@@ -47,16 +46,16 @@ public class ProductService {
                 listOfStages.add(stage);
             }
             if (stage.getPersonnel() != null)
-                stage.getPersonnel().forEach(personnel -> stageStringMap.get(PERSONNEL_KEY).add(personnel.getProfession()));
-            if (stage.getEquipment() != null) stageStringMap.get(EQUIPMENT_KEY).addAll(stage.getEquipment());
-            if (stage.getEquipment() != null) stageStringMap.get(COMPONENTS_KEY).addAll(stage.getComponents());
+                stage.getPersonnel().forEach(personnel -> elementsMap.get(PERSONNEL_KEY).add(personnel.getProfession()));
+            if (stage.getEquipment() != null) elementsMap.get(EQUIPMENT_KEY).addAll(stage.getEquipment());
+            if (stage.getEquipment() != null) elementsMap.get(COMPONENTS_KEY).addAll(stage.getComponents());
             if (stage.getOrganizations() != null)
-                stageStringMap.get(ORGANIZATIONS_KEY).addAll(stage.getOrganizations());
+                elementsMap.get(ORGANIZATIONS_KEY).addAll(stage.getOrganizations());
         }
     }
 
-    public void createProduct(String name, String strategicDirection){
-        Product product=new Product();
+    public void createProduct(String name, String strategicDirection) {
+        Product product = new Product();
         product.setName(name);
         product.setStrategicDirection(strategicDirection);
         product.setStages(new ArrayList<>());
@@ -68,23 +67,26 @@ public class ProductService {
         return listOfStages;
     }
 
-    public Map<String, HashSet<String>> getStageStringMap() {
-        return stageStringMap;
+    public Map<String, HashSet<String>> getElementsMap() {
+        return elementsMap;
     }
 
     public void exportData(String path) throws IOException {
-        JSONUtil.exportData(path,stageStringMap,listOfStages);
+        JSONUtil.exportData(path, elementsMap, listOfStages);
     }
-    public void importData(String path) throws IOException {
+
+    public void importData(String path) throws Exception {
         addDataFromWrapper(JSONUtil.importData(path));
     }
-    public void importProduct(String path) throws Exception{
+
+    public void importProduct(String path) throws Exception {
         addProduct(JSONUtil.importFromJson(path));
     }
+
     private void addDataFromWrapper(JSONUtil.DataWrapper dataWrapper) {
 
-        dataWrapper.getStageStringMap().forEach((key, value) -> {
-            stageStringMap.getOrDefault(key, new HashSet<>()).addAll(value);
+        dataWrapper.getComponentsMap().forEach((key, value) -> {
+            elementsMap.getOrDefault(key, new HashSet<>()).addAll(value);
         });
 
         listOfStages.addAll(dataWrapper.getListOfStages());
@@ -92,17 +94,17 @@ public class ProductService {
         for (Stage stage : dataWrapper.getListOfStages()) {
             if (stage.getPersonnel() != null) {
                 for (Personnel personnel : stage.getPersonnel()) {
-                    stageStringMap.get(PERSONNEL_KEY).add(personnel.getProfession());
+                    elementsMap.get(PERSONNEL_KEY).add(personnel.getProfession());
                 }
             }
             if (stage.getOrganizations() != null) {
-                stageStringMap.get(ORGANIZATIONS_KEY).addAll(stage.getOrganizations());
+                elementsMap.get(ORGANIZATIONS_KEY).addAll(stage.getOrganizations());
             }
             if (stage.getComponents() != null) {
-                stageStringMap.get(COMPONENTS_KEY).addAll(stage.getComponents());
+                elementsMap.get(COMPONENTS_KEY).addAll(stage.getComponents());
             }
             if (stage.getEquipment() != null) {
-                stageStringMap.get(EQUIPMENT_KEY).addAll(stage.getEquipment());
+                elementsMap.get(EQUIPMENT_KEY).addAll(stage.getEquipment());
             }
         }
     }

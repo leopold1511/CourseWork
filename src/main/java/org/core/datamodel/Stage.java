@@ -1,4 +1,4 @@
-package datamodel;
+package org.core.datamodel;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public class Stage extends Data {
     private ArrayList<Personnel> personnel;
     private ArrayList<String> nextStages;
 
-    public  ArrayList<String> getOrganizations() {
+    public ArrayList<String> getOrganizations() {
         return organizations;
     }
 
@@ -46,9 +46,6 @@ public class Stage extends Data {
         return nextStages;
     }
 
-    public void setNextStages(ArrayList<String> nextStages) {
-        this.nextStages = nextStages;
-    }
 }
 
 

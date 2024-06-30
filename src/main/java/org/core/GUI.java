@@ -1,9 +1,10 @@
-package org.example;
+package org.core;
 
-import controllersandservices.ProductService;
-import datamodel.Personnel;
-import datamodel.Product;
-import datamodel.Stage;
+import org.utils.GraphConstructor;
+import org.utils.TreeConstructor;
+import org.core.datamodel.Personnel;
+import org.core.datamodel.Product;
+import org.core.datamodel.Stage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -116,7 +117,7 @@ public class GUI extends JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             try {
-                productService.exportData(fileChooser.getSelectedFile().getAbsolutePath());
+                productService.exportData(fileChooser.getSelectedFile().getAbsolutePath() + ".json");
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Error exporting data: " + ex.getMessage());
             } catch (ArrayIndexOutOfBoundsException ex) {
@@ -133,13 +134,14 @@ public class GUI extends JFrame {
         JFileChooser fileChooser = new JFileChooser(path);
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            try {
+            if (fileChooser.getSelectedFile().getAbsolutePath().endsWith(".json")) try {
                 productService.importData(fileChooser.getSelectedFile().getAbsolutePath());
                 JOptionPane.showMessageDialog(this, "Data imported successfully.");
                 TreeConstructor.recreateTree(mainPanel, productService);
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error importing data: " + ex.getMessage());
             }
+            else JOptionPane.showMessageDialog(this, "File must be json");
         }
     }
 
@@ -156,19 +158,19 @@ public class GUI extends JFrame {
         }
 
         String[] productNames = filteredProducts.stream().map(Product::getName).toArray(String[]::new);
+        if (productNames.length == 0) return;
 
         String selectedProductName = (String) JOptionPane.showInputDialog(null, "Выберите продукт для просмотра графика:", "Выбор продукта", JOptionPane.QUESTION_MESSAGE, null, productNames, productNames[0]);
         if (selectedProductName != null) {
             Product selectedProduct;
             try {
                 selectedProduct = productList.stream().filter(p -> p.getName().equals(selectedProductName)).findFirst().orElse(null);
-            }catch (ArrayIndexOutOfBoundsException ex){
+            } catch (ArrayIndexOutOfBoundsException ex) {
                 JOptionPane.showMessageDialog(this, "Can't filter" + ex.getMessage());
                 return;
             }
             if (selectedProduct != null) {
-                GraphConstructor graphConstructor = new GraphConstructor();
-                graphConstructor.viewGraph(selectedProduct);
+                GraphConstructor.viewGraph(selectedProduct);
             } else {
                 JOptionPane.showMessageDialog(null, "Выбранный продукт не найден.", "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
@@ -176,8 +178,7 @@ public class GUI extends JFrame {
     }
 
     private void addElement() {
-        String[] names = {ProductService.COMPONENTS_KEY, ProductService.PERSONNEL_KEY, ProductService.EQUIPMENT_KEY, ProductService.ORGANIZATIONS_KEY, ProductService.STAGES_KEY
-        };
+        String[] names = {ProductService.COMPONENTS_KEY, ProductService.PERSONNEL_KEY, ProductService.EQUIPMENT_KEY, ProductService.ORGANIZATIONS_KEY, ProductService.STAGES_KEY};
 
         String selectedProductName = (String) JOptionPane.showInputDialog(null, "Выберите то что вы хотите добавить:", "Выбор", JOptionPane.QUESTION_MESSAGE, null, names, names[0]);
 
@@ -187,132 +188,135 @@ public class GUI extends JFrame {
     }
 
     private void displayForm(String selectedProductName) {
-        JPanel panel = new JPanel(new GridLayout(0, 2, 2, 2));
+        JPanel panel = new JPanel(new GridBagLayout());
         JScrollPane scrollPane = new JScrollPane(panel);
-        JTextField nameField = new JTextField();
-        JTextField strategicDirField = new JTextField();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);  // padding
 
-        JList<String> organizationsList = new JList<>(productService.getStageStringMap().get(ProductService.ORGANIZATIONS_KEY).toArray(new String[0]));
+        JTextField nameField = new JTextField(20);
+        JTextField strategicDirField = new JTextField(20);
+
+        JList<String> organizationsList = new JList<>(productService.getElementsMap().get(ProductService.ORGANIZATIONS_KEY).toArray(new String[0]));
         organizationsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane organizationsScrollPane = new JScrollPane(organizationsList);
 
-        JList<String> componentsList = new JList<>(productService.getStageStringMap().get(ProductService.COMPONENTS_KEY).toArray(new String[0]));
+        JList<String> componentsList = new JList<>(productService.getElementsMap().get(ProductService.COMPONENTS_KEY).toArray(new String[0]));
         componentsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane componentsScrollPane = new JScrollPane(componentsList);
 
-        JList<String> equipmentList = new JList<>(productService.getStageStringMap().get(ProductService.EQUIPMENT_KEY).toArray(new String[0]));
+        JList<String> equipmentList = new JList<>(productService.getElementsMap().get(ProductService.EQUIPMENT_KEY).toArray(new String[0]));
         equipmentList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane equipmentScrollPane = new JScrollPane(equipmentList);
 
-        JList<String> personnelList = new JList<>(productService.getStageStringMap().get(ProductService.PERSONNEL_KEY).toArray(new String[0]));
+        JList<String> personnelList = new JList<>(productService.getElementsMap().get(ProductService.PERSONNEL_KEY).toArray(new String[0]));
         personnelList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane personnelScrollPane = new JScrollPane(personnelList);
 
-        switch (selectedProductName) {
-            case ProductService.STAGES_KEY -> {
-                panel.add(new JLabel("Name:"));
-                panel.add(nameField);
-                panel.add(new JLabel("Organizations:"));
-                panel.add(organizationsScrollPane);
-                panel.add(new JLabel("Components:"));
-                panel.add(componentsScrollPane);
-                panel.add(new JLabel("Equipment:"));
-                panel.add(equipmentScrollPane);
-                panel.add(new JLabel("Personnel:"));
-                panel.add(personnelScrollPane);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Name:"), gbc);
+        gbc.gridx = 1;
+        panel.add(nameField, gbc);
 
-                personnelList.addListSelectionListener(e -> {
-                    if (!e.getValueIsAdjusting()) {
-                        panel.removeAll();
-                        panel.add((new Label(("Name"))));
-                        panel.add(nameField);
-                        panel.add(new JLabel("Organizations:"));
-                        panel.add(organizationsScrollPane);
-                        panel.add(new JLabel("Components:"));
-                        panel.add(componentsScrollPane);
-                        panel.add(new JLabel("Equipment:"));
-                        panel.add(equipmentScrollPane);
-                        panel.add(new JLabel("Personnel:"));
-                        panel.add(personnelScrollPane);
+        if (selectedProductName.equals(ProductService.STAGES_KEY)) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            panel.add(new JLabel("Organizations:"), gbc);
+            gbc.gridx = 1;
+            panel.add(organizationsScrollPane, gbc);
 
-                        for (String selectedPersonnel : personnelList.getSelectedValuesList()) {
-                            panel.add(new JLabel(selectedPersonnel + " Человеко-часы:"));
-                            JTextField hoursField = new JTextField();
-                            hoursField.setSize(250, 10);
-                            panel.add(hoursField);
+            gbc.gridx = 0;
+            gbc.gridy++;
+            panel.add(new JLabel("Components:"), gbc);
+            gbc.gridx = 1;
+            panel.add(componentsScrollPane, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy++;
+            panel.add(new JLabel("Equipment:"), gbc);
+            gbc.gridx = 1;
+            panel.add(equipmentScrollPane, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy++;
+            panel.add(new JLabel("Personnel:"), gbc);
+            gbc.gridx = 1;
+            panel.add(personnelScrollPane, gbc);
+
+            personnelList.addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting()) {
+                    for (int i = panel.getComponentCount() - 1; i >= 0; i--) {
+                        if (panel.getComponent(i) instanceof JTextField && ((JLabel) panel.getComponent(i - 1)).getText().endsWith("Человеко-часы:")) {
+                            panel.remove(i);
+                            panel.remove(i - 1);
                         }
-
-                        panel.revalidate();
-                        panel.repaint();
                     }
-                });
-            }
-            default -> {
-                panel.removeAll();
-                panel.add(new JLabel("Введите наименование:"));
-                panel.add(nameField);
-            }
-            case ProductService.PRODUCTS_KEY -> {
-                panel.removeAll();
-                panel.add(new JLabel("Введите название:"));
-                panel.add(nameField);
-                panel.add(new JLabel("Введите стратегическое направление:"));
-                panel.add(strategicDirField);
-            }
+
+                    // Add new personnel man-hours inputs
+                    for (String selectedPersonnel : personnelList.getSelectedValuesList()) {
+                        gbc.gridx = 0;
+                        gbc.gridy++;
+                        panel.add(new JLabel(selectedPersonnel + " Человеко-часы:"), gbc);
+                        gbc.gridx = 1;
+                        JTextField hoursField = new JTextField(20);
+                        panel.add(hoursField, gbc);
+                    }
+
+                    panel.revalidate();
+                    panel.repaint();
+                }
+            });
+        } else if (selectedProductName.equals(ProductService.PRODUCTS_KEY)) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            panel.add(new JLabel("Strategic Direction:"), gbc);
+            gbc.gridx = 1;
+            panel.add(strategicDirField, gbc);
         }
 
         int result;
         boolean isValidInput = false;
         do {
-            result = JOptionPane.showConfirmDialog(null, scrollPane, "Введите данные", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            result = JOptionPane.showConfirmDialog(null, scrollPane, "Enter Data", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-            if (result == JOptionPane.CANCEL_OPTION) {
-                break;
-            }
-            if (result == JOptionPane.CLOSED_OPTION) {
+            if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
                 break;
             }
 
             if (result == JOptionPane.OK_OPTION) {
                 String name = nameField.getText();
                 if (name.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Введите наименование", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
                     continue;
                 }
 
                 switch (selectedProductName) {
-                    case ProductService.COMPONENTS_KEY:
-                    case ProductService.PERSONNEL_KEY:
-                    case ProductService.ORGANIZATIONS_KEY:
-                    case ProductService.EQUIPMENT_KEY:
-                        productService.getStageStringMap().get(selectedProductName).add(name);
-                        break;
-                    case ProductService.STAGES_KEY: {
-
+                    case ProductService.COMPONENTS_KEY, ProductService.PERSONNEL_KEY, ProductService.ORGANIZATIONS_KEY, ProductService.EQUIPMENT_KEY -> productService.getElementsMap().get(selectedProductName).add(name);
+                    case ProductService.STAGES_KEY -> {
                         List<String> selectedEquipment = List.copyOf(equipmentList.getSelectedValuesList());
                         List<String> selectedOrganizations = List.copyOf(organizationsList.getSelectedValuesList());
                         List<String> selectedComponents = List.copyOf(componentsList.getSelectedValuesList());
-                        ArrayList<Personnel> selectedPersonnel;
+                        ArrayList<Personnel> selectedPersonnel = new ArrayList<>();
 
-                        selectedPersonnel = new ArrayList<>();
-
-                        Component[] components = panel.getComponents();
-                        for (int i = 0; i < components.length; i++) {
-                            if (components[i] instanceof JLabel && ((JLabel) components[i]).getText().endsWith("Человеко-часы:")) {
-                                String profession = ((JLabel) components[i]).getText().replace("Человеко-часы:", "");
-                                JTextField hoursField = (JTextField) components[++i];
+                        // Collecting personnel man-hours input
+                        for (int i = 0; i < panel.getComponentCount(); i++) {
+                            if (panel.getComponent(i) instanceof JLabel && ((JLabel) panel.getComponent(i)).getText().endsWith("Человеко-часы:")) {
+                                String profession = ((JLabel) panel.getComponent(i)).getText().replace(" Человеко-часы:", "");
+                                JTextField hoursField = (JTextField) panel.getComponent(i + 1);
                                 if (hoursField.getText().isEmpty()) {
-                                    JOptionPane.showMessageDialog(null, "Введите количество человеко-часов для " + profession, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(null, "Please enter the man-hours for " + profession, "Error", JOptionPane.ERROR_MESSAGE);
                                     continue;
                                 }
                                 int manHours = Integer.parseInt(hoursField.getText());
                                 selectedPersonnel.add(new Personnel(profession, manHours));
                             }
                         }
+
                         if (selectedOrganizations.isEmpty() || selectedComponents.isEmpty() || selectedEquipment.isEmpty() || selectedPersonnel.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "Выберите все необходимые поля", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Please select all necessary fields", "Error", JOptionPane.ERROR_MESSAGE);
                             continue;
                         }
+
                         Stage stage = new Stage();
                         stage.setName(name);
                         stage.setOrganizations(new ArrayList<>(selectedOrganizations));
@@ -320,16 +324,14 @@ public class GUI extends JFrame {
                         stage.setEquipment(new ArrayList<>(selectedEquipment));
                         stage.setPersonnel(new ArrayList<>(selectedPersonnel));
                         productService.getListOfStages().add(stage);
-                        break;
                     }
-                    case ProductService.PRODUCTS_KEY: {
+                    case ProductService.PRODUCTS_KEY -> {
                         String strategicDirection = strategicDirField.getText();
                         if (strategicDirection.isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "Введите стратегическое направление", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Please enter the strategic direction", "Error", JOptionPane.ERROR_MESSAGE);
                             continue;
                         }
                         productService.createProduct(name, strategicDirection);
-                        break;
                     }
                 }
                 isValidInput = true;

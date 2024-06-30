@@ -1,14 +1,11 @@
-package datamodel;
+package org.core.datamodel;
 
 public abstract class Data {
     protected String id;
     protected String name;
+
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Override
