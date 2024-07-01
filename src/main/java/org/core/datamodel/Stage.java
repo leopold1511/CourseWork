@@ -2,8 +2,10 @@ package org.core.datamodel;
 
 import java.util.ArrayList;
 
-public class Stage extends Data {
+public class Stage {
 
+    private String id;
+    private String name;
     private ArrayList<String> organizations;
     private ArrayList<String> components;
     private ArrayList<String> equipment;
@@ -48,6 +50,27 @@ public class Stage extends Data {
 
     public void setNextStages(ArrayList<String> nextStages) {
         this.nextStages = nextStages;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
 

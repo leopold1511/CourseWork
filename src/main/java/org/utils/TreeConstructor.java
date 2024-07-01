@@ -55,8 +55,8 @@ public class TreeConstructor {
             valueNode.add(componentsNode);
             keyNode.add(valueNode);
             if(stage.getPersonnel()!=null)stage.getPersonnel().forEach(p ->{
-                DefaultMutableTreeNode node = new DefaultMutableTreeNode(p.getProfession());
-                node.add(new DefaultMutableTreeNode(p.getManHours()));
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode(p.profession());
+                node.add(new DefaultMutableTreeNode(p.manHours()));
                 personalNode.add(node);
             } );
             if(stage.getEquipment()!=null)stage.getEquipment().forEach(e -> equipmentNode.add(new DefaultMutableTreeNode(e)));

@@ -1,13 +1,9 @@
 package org.core;
 
-import javax.swing.*;
 
-
-
-public class Main extends JFrame {
+public class Main {
     public static void main(String[] args) {
-        ProductService productService = new ProductService();
-        GUI gui = new GUI(productService);
+        GUI gui = new GUI();
         gui.setVisible(true);
     }
 }

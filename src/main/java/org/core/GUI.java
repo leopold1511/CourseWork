@@ -4,7 +4,6 @@ import org.utils.GraphConstructor;
 import org.utils.TreeConstructor;
 import org.core.datamodel.Personnel;
 import org.core.datamodel.Product;
-import org.core.datamodel.Stage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,8 +24,8 @@ public class GUI extends JFrame {
     public static final String PASSIVE_EKB = "Пассивная ЭКБ";
     public static final String RADIATION_RESISTANT_EKB = "Радиационностойкая ЭКБ";
 
-    public GUI(ProductService productService) {
-        this.productService = productService;
+    public GUI( ) {
+        this.productService =new ProductService();
         initialize();
     }
 

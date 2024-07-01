@@ -44,7 +44,7 @@ public class ProductService {
                 listOfStages.add(stage);
             }
             if (stage.getPersonnel() != null)
-                stage.getPersonnel().forEach(personnel -> elementsMap.get(PERSONNEL_KEY).add(personnel.getProfession()));
+                stage.getPersonnel().forEach(personnel -> elementsMap.get(PERSONNEL_KEY).add(personnel.profession()));
             if (stage.getEquipment() != null) elementsMap.get(EQUIPMENT_KEY).addAll(stage.getEquipment());
             if (stage.getEquipment() != null) elementsMap.get(COMPONENTS_KEY).addAll(stage.getComponents());
             if (stage.getOrganizations() != null)
@@ -99,7 +99,7 @@ public class ProductService {
 
             if (stage.getPersonnel() != null) {
                 for (Personnel personnel : stage.getPersonnel()) {
-                    elementsMap.get(PERSONNEL_KEY).add(personnel.getProfession());
+                    elementsMap.get(PERSONNEL_KEY).add(personnel.profession());
                 }
             }
             if (stage.getOrganizations() != null) {
@@ -173,7 +173,7 @@ public class ProductService {
 
         if (stage.getPersonnel() != null) {
             for (Personnel personnel : stage.getPersonnel()) {
-                elementsMap.get(PERSONNEL_KEY).add(personnel.getProfession());
+                elementsMap.get(PERSONNEL_KEY).add(personnel.profession());
             }
         }
         if (stage.getOrganizations() != null) {
