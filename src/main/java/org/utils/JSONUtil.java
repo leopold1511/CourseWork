@@ -32,12 +32,12 @@ public class JSONUtil {
 
     }
 
-    public static void exportData(String filePath, Map<String, HashSet<String>> componentsMap, ArrayList<Stage> listOfStages) throws IOException {
+    public static void exportData(String filePath, Map<String, HashSet<String>> elementsMap, ArrayList<Stage> listOfStages) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         FileWriter writer = new FileWriter(filePath);
 
         DataWrapper dataWrapper = new DataWrapper();
-        dataWrapper.componentsMap = componentsMap;
+        dataWrapper.elementsMap = elementsMap;
         dataWrapper.listOfStages = listOfStages;
 
         gson.toJson(dataWrapper, writer);
@@ -45,11 +45,11 @@ public class JSONUtil {
     }
 
     public static class DataWrapper {
-        private Map<String, HashSet<String>> componentsMap;
+        private Map<String, HashSet<String>> elementsMap;
         private ArrayList<Stage> listOfStages;
 
-        public Map<String, HashSet<String>> getComponentsMap() {
-            return componentsMap;
+        public Map<String, HashSet<String>> getElementsMap() {
+            return elementsMap;
         }
 
         public ArrayList<Stage> getListOfStages() {

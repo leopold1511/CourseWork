@@ -85,7 +85,7 @@ public class ProductService {
 
     private void addDataFromWrapper(JSONUtil.DataWrapper dataWrapper) {
 
-        dataWrapper.getComponentsMap().forEach((key, value) -> {
+        dataWrapper.getElementsMap().forEach((key, value) -> {
             elementsMap.getOrDefault(key, new HashSet<>()).addAll(value);
         });
 
